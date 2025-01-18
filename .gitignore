@@ -11,7 +11,7 @@ logs/
 
 # Environment variables
 .env
-.prod.env
+.env.prod
 
 # System files
 .DS_Store
