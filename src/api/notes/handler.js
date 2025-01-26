@@ -3,11 +3,8 @@ class NotesHandler {
     this._service = service;
     this._validator = validator;
 
-    this.postNoteHandler = this.postNoteHandler.bind(this);
-    this.getNotesHandler = this.getNotesHandler.bind(this);
-    this.getNoteByIdHandler = this.getNoteByIdHandler.bind(this);
-    this.putNoteByIdHandler = this.putNoteByIdHandler.bind(this);
-    this.deleteNoteByIdHandler = this.deleteNoteByIdHandler.bind(this);
+    // binding di gunakan ketika tidak menggunakan arrow function saat memanggil method
+    // this.postNoteHandler = this.postNoteHandler.bind(this);
   }
 
   async postNoteHandler(request, h) {
@@ -33,34 +30,40 @@ class NotesHandler {
     return response;
   }
 
-  async getNotesHandler(request) {
+  async getNotesHandler(request, h) {
     const { id: credentialId } = request.auth.credentials;
 
     const notes = await this._service.getNotes(credentialId);
-    return {
+
+    const response = h.response({
       status: "success",
       data: {
         notes,
       },
-    };
+    });
+    response.code(200);
+    return response;
   }
 
-  async getNoteByIdHandler(request) {
+  async getNoteByIdHandler(request, h) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
 
     await this._service.verifyNoteAccess(id, credentialId);
 
     const note = await this._service.getNoteById(id);
-    return {
+
+    const response = h.response({
       status: "success",
       data: {
         note,
       },
-    };
+    });
+    response.code(200);
+    return response;
   }
 
-  async putNoteByIdHandler(request) {
+  async putNoteByIdHandler(request, h) {
     this._validator.validateNotePayload(request.payload);
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
@@ -69,13 +72,15 @@ class NotesHandler {
 
     await this._service.editNoteById(id, request.payload);
 
-    return {
+    const response = h.response({
       status: "success",
       message: "Catatan berhasil diperbarui",
-    };
+    });
+    response.code(200);
+    return response;
   }
 
-  async deleteNoteByIdHandler(request) {
+  async deleteNoteByIdHandler(request, h) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
 
@@ -83,10 +88,12 @@ class NotesHandler {
 
     await this._service.deleteNoteById(id);
 
-    return {
+    const response = h.response({
       status: "success",
       message: "Catatan berhasil dihapus",
-    };
+    });
+    response.code(200);
+    return response;
   }
 }
 

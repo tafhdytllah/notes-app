@@ -59,10 +59,6 @@ class NotesService {
   }
 
   async getNotes(owner) {
-    // const query = {
-    //   text: "SELECT * FROM notes WHERE owner = $1",
-    //   values: [owner],
-    // };
     const query = {
       text: `SELECT notes.* FROM notes
     LEFT JOIN collaborations ON collaborations.note_id = notes.id
@@ -75,10 +71,6 @@ class NotesService {
   }
 
   async getNoteById(id) {
-    // const query = {
-    //   text: "SELECT * FROM notes WHERE id = $1",
-    //   values: [id],
-    // };
     const query = {
       text: `SELECT notes.*, users.username
     FROM notes

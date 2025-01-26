@@ -3,10 +3,6 @@ class CollaborationsHandler {
     this._collaborationsService = collaborationsService;
     this._notesService = notesService;
     this._validator = validator;
-
-    this.postCollaborationHandler = this.postCollaborationHandler.bind(this);
-    this.deleteCollaborationHandler =
-      this.deleteCollaborationHandler.bind(this);
   }
 
   async postCollaborationHandler(request, h) {
@@ -28,6 +24,7 @@ class CollaborationsHandler {
       },
     });
     response.code(201);
+
     return response;
   }
 
@@ -39,10 +36,13 @@ class CollaborationsHandler {
     await this._notesService.verifyNoteOwner(noteId, credentialId);
     await this._collaborationsService.deleteCollaboration(noteId, userId);
 
-    return {
+    const response = h.response({
       status: "success",
       message: "Kolaborasi berhasil dihapus",
-    };
+    });
+    response.code(200);
+
+    return response;
   }
 }
 

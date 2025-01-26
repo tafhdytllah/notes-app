@@ -4,10 +4,6 @@ class UsersHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
-
-    this.postUserHandler = this.postUserHandler.bind(this);
-    this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
-    this.getUsersByUsernameHandler = this.getUsersByUsernameHandler.bind(this);
   }
 
   async postUserHandler(request, h) {
@@ -28,39 +24,49 @@ class UsersHandler {
       },
     });
     response.code(201);
+
     return response;
   }
 
-  async getUserByIdHandler(request) {
+  async getUserByIdHandler(request, h) {
     const { id } = request.params;
     const user = await this._service.getUserById(id);
 
-    return {
+    const response = h.response({
       status: "success",
       data: {
         user,
       },
-    };
+    });
+    response.code(200);
+
+    return response;
   }
 
   async getUsersByUsernameHandler(request, h) {
+    let response;
+
     try {
       const { username = "" } = request.query;
       const users = await this._service.getUserByUsername(username);
 
-      return {
+      response = h.response({
         status: "success",
         data: {
           users,
         },
-      };
+      });
+      response.code(200);
+
+      return response;
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
+        response = h.response({
           status: "fail",
           message: error.message,
         });
         response.code(error.statusCode);
+
         return response;
       }
     }
